@@ -1,7 +1,7 @@
 package com.rgm.auth;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -29,12 +29,6 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 
-	@Value("${oauth.db.url}")
-	private String oauthDbUrl;
-
-	@Value("${oauth.db.driver-class-name}")
-	private String oauthDbDriver;
-
 	/**
 	 * Configures the data source using the application properties
 	 * for the OAuth database url and driver class name.
@@ -42,13 +36,15 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 	 * @return fully configured DataSource
 	 */
 	@Bean
+	@ConfigurationProperties(prefix = "oauth.db")
 	public DataSource dataSource() {
-		return DataSourceBuilder.create()
-				.driverClassName(oauthDbDriver).url(oauthDbUrl).build();
+		return DataSourceBuilder.create().build();
 	}
 
 	/**
-	 * Provides a JdbcTokenStore for the DataSource configured in #dataSource().
+	 * Provides a persistent JdbcTokenStore using the DataSource configured in
+	 * #dataSource.
+	 *
 	 * @return
 	 */
 	@Bean
