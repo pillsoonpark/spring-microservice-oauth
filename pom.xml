@@ -6,6 +6,7 @@
 
 	<groupId>com.rgm.app.starter</groupId>
 	<artifactId>spring-microservice-oauth</artifactId>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 	<name>OAuth Provider for Spring Boot Microservices</name>
 

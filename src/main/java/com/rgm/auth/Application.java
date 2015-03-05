@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  * Entry point for the Spring Boot application.
  *
  * @author Rob Mills
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 @Configuration
@@ -24,8 +24,8 @@ import javax.sql.DataSource;
 @SpringBootApplication
 public class Application {
 
-	private static final String CREATE_OAUTH_ACCESS_TOKEN_SQL = "create table if not exists oauth_access_token ("+
-			"token_id VARCHAR(256),"+
+	private static final String CREATE_OAUTH_ACCESS_TOKEN_SQL = "CREATE TABLE IF NOT EXISTS oauth_access_token ("+
+			"token_id VARCHAR(256) NOT NULL PRIMARY KEY,"+
 			"token BYTEA,"+
 			"authentication_id VARCHAR(256),"+
 			"user_name VARCHAR(256),"+
@@ -34,20 +34,37 @@ public class Application {
 			"refresh_token VARCHAR(256)"+
 			");";
 
-	private static final String DELETE_TOKENS_SQL = "delete from oauth_access_token";
+	private static final String CREATE_USERS_SQL = "CREATE TABLE IF NOT EXISTS users ("+
+			"username VARCHAR(50) NOT NULL PRIMARY KEY,"+
+			"password VARCHAR(60) NOT NULL,"+
+			"enabled BOOLEAN NOT NULL DEFAULT TRUE"+
+			");";
+
+	private static final String CREATE_AUTHORITIES_SQL = "CREATE TABLE IF NOT EXISTS authorities ("+
+			"username VARCHAR(50) NOT NULL,"+
+			"authority VARCHAR(50) NOT NULL DEFAULT 'ROLE_USER',"+
+			"CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)"+
+			");";
+
+	private static final String DROP_IX_AUTH_USERNAME_SQL = "DROP INDEX IF EXISTS ix_auth_username;";
+
+	private static final String CREATE_IX_AUTH_USERNAME_SQL = "CREATE UNIQUE INDEX ix_auth_username "+
+			"on authorities (username,authority);";
 
 	@Autowired
 	private DataSource dataSource;
 
 	/**
-	 * Sets up the token data store and clear any old tokens after
-	 * application startup.
+	 * Set up all the required database schemas.
 	 */
 	@PostConstruct
-	public void setUpTokenDatasource() {
+	public void setUpDatasource() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute(CREATE_OAUTH_ACCESS_TOKEN_SQL);
-		jdbcTemplate.execute(DELETE_TOKENS_SQL);
+		jdbcTemplate.execute(CREATE_USERS_SQL);
+		jdbcTemplate.execute(CREATE_AUTHORITIES_SQL);
+		jdbcTemplate.execute(DROP_IX_AUTH_USERNAME_SQL);
+		jdbcTemplate.execute(CREATE_IX_AUTH_USERNAME_SQL);
 	}
 
 	public static void main(String[] args) {

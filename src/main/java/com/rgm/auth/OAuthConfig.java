@@ -33,7 +33,7 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 	 * Configures the data source using the application properties
 	 * for the OAuth database url and driver class name.
 	 *
-	 * @return fully configured DataSource
+	 * @return the fully configured DataSource
 	 */
 	@Bean
 	@ConfigurationProperties(prefix = "oauth.db")
@@ -45,7 +45,7 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 	 * Provides a persistent JdbcTokenStore using the DataSource configured in
 	 * #dataSource.
 	 *
-	 * @return
+	 * @return the persistent JdbcTokenStore
 	 */
 	@Bean
 	public TokenStore tokenStore() {
