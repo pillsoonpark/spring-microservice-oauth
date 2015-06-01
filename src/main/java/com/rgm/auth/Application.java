@@ -49,7 +49,7 @@ public class Application {
 	private static final String DROP_IX_AUTH_USERNAME_SQL = "DROP INDEX IF EXISTS ix_auth_username;";
 
 	private static final String CREATE_IX_AUTH_USERNAME_SQL = "CREATE UNIQUE INDEX ix_auth_username "+
-			"on authorities (username,authority);";
+			"ON authorities (username,authority);";
 
 	@Autowired
 	private DataSource dataSource;

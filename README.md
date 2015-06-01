@@ -6,14 +6,23 @@ works by persisting the OAuth tokens to a shared data store.  Included is the
 dependency on the PostgreSQL JDBC driver, which I prefer.  Simply update the
 dependency if you prefer something else.
 
-## To Build
-mvn clean package 
-
 ## To Run
-java -Doauth.db.url="\<DATABASE URL\>" -Doauth.db.driver-class-name="\<DATABASE
-DRIVER\>" -jar target/*.jar
+### Build the application
+`$ mvn clean package` 
+
+### Build the docker containers
+`$ docker-compose build`
+
+### Run everything
+`$ docker-compose up`
+
 
 ## Change Log
+### 1.2
+Features:
+- Docker image for PostgreSQL database schema
+- Docker image for application
+
 ### 1.0
 Features:
 - In-memory user and OAuth client configuration
