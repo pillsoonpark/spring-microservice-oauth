@@ -23,6 +23,10 @@ Features:
 - Docker image for PostgreSQL database schema
 - Docker image for application
 
+### 1.1
+Features:
+- Persistent user config
+
 ### 1.0
 Features:
 - In-memory user and OAuth client configuration
