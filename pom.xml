@@ -62,22 +62,116 @@
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>3.4</version>
+					<executions>
+						<execution>
+							<phase>verify</phase>
+							<goals>
+								<goal>check</goal>
+								<goal>cpd-check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-		</plugins>
-	</build>
-
-	<reporting>
-		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.4</version>
+			</plugin>
+			<plugin>
+				<groupId>net.wouterdanes.docker</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>3.0</version>
+				<executions>
+					<execution>
+						<id>build</id>
+						<configuration>
+							<images>
+								<image>
+									<id>db</id>
+									<dockerFile>${project.basedir}/opt/docker/db/Dockerfile</dockerFile>
+									<artifacts>
+										<artifact>
+											<file>${project.basedir}/opt/docker/db/init-database.sh</file>
+											<dest>init-database.sh</dest>
+										</artifact>
+									</artifacts>
+									<keep>true</keep>
+									<nameAndTag>robgmills/auth-db:latest</nameAndTag>
+								</image>
+								<image>
+									<id>app</id>
+									<dockerFile>${project.basedir}/Dockerfile</dockerFile>
+									<artifacts>
+										<artifact>
+											<file>${project.basedir}/target/${project.build.finalName}.jar</file>
+											<dest>target/${project.build.finalName}.jar</dest>
+										</artifact>
+									</artifacts>
+									<keep>true</keep>
+									<nameAndTag>robgmills/auth-app:latest</nameAndTag>
+								</image>
+							</images>
+						</configuration>
+						<goals>
+							<goal>build-images</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>start</id>
+						<configuration>
+							<containers>
+								<container>
+									<id>db</id>
+									<image>db</image>
+								</container>
+								<container>
+									<id>app</id>
+									<image>app</image>
+								</container>
+							</containers>
+						</configuration>
+						<goals>
+							<goal>start-containers</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<goals>
+							<goal>stop-containers</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
-	</reporting>
-
+	</build>
 </project>
