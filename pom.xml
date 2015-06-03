@@ -8,7 +8,16 @@
 	<artifactId>spring-microservice-oauth</artifactId>
 	<version>1.2</version>
 	<packaging>jar</packaging>
-	<name>OAuth Provider for Spring Boot Microservices</name>
+	<name>OAuth</name>
+	<description>OAuth Provider for Spring Boot Microservices</description>
+
+	<developers>
+		<developer>
+			<id>robgmills</id>
+			<name>Rob Mills</name>
+			<email>me@robgmills.com</email>
+		</developer>
+	</developers>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
