@@ -11,6 +11,11 @@
 	<name>OAuth</name>
 	<description>OAuth Provider for Spring Boot Microservices</description>
 
+	<organization>
+		<name>RobGMills</name>
+		<url>http://robgmills.com</url>
+	</organization>
+
 	<developers>
 		<developer>
 			<id>robgmills</id>
@@ -58,6 +63,20 @@
 			<version>9.4-1201-jdbc41</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>2.4.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -102,77 +121,119 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>net.wouterdanes.docker</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>3.0</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>build</id>
-						<phase>pre-integration-test</phase>
+						<id>default-test</id>
+						<phase>test</phase>
 						<configuration>
-							<images>
-								<image>
-									<id>db</id>
-									<dockerFile>${project.basedir}/opt/docker/db/Dockerfile</dockerFile>
-									<artifacts>
-										<artifact>
-											<file>${project.basedir}/opt/docker/db/init-database.sh</file>
-											<dest>init-database.sh</dest>
-										</artifact>
-									</artifacts>
-									<keep>false</keep>
-									<nameAndTag>robgmills/auth-db:latest</nameAndTag>
-								</image>
-								<image>
-									<id>app</id>
-									<dockerFile>${project.basedir}/Dockerfile</dockerFile>
-									<artifacts>
-										<artifact>
-											<file>${project.basedir}/target/${project.build.finalName}.jar</file>
-											<dest>target/${project.build.finalName}.jar</dest>
-										</artifact>
-									</artifacts>
-									<keep>false</keep>
-									<nameAndTag>robgmills/auth-app:latest</nameAndTag>
-								</image>
-							</images>
+							<excludes>
+								<exclude>**/*IT.java</exclude>
+							</excludes>
 						</configuration>
 						<goals>
-							<goal>build-images</goal>
+							<goal>test</goal>
 						</goals>
 					</execution>
 					<execution>
-						<id>start</id>
-						<phase>pre-integration-test</phase>
+						<id>verify</id>
+						<phase>integration-test</phase>
 						<configuration>
-							<containers>
-								<container>
-									<id>db</id>
-									<image>db</image>
-								</container>
-								<container>
-									<id>app</id>
-									<image>app</image>
-								</container>
-							</containers>
+							<includes>
+								<include>**/*IT.java</include>
+							</includes>
+							<excludes>
+								<exclude>**/*Tests.java</exclude>
+								<exclude>**/*Test.java</exclude>
+								<exclude>**/Abstract*.java</exclude>
+							</excludes>
+							<systemPropertyVariables>
+								<auth.test.host>${docker.host.address}</auth.test.host>
+								<auth.test.port>${auth.app.port}</auth.test.port>
+							</systemPropertyVariables>
 						</configuration>
 						<goals>
-							<goal>start-containers</goal>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jolokia</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.12.0</version>
+				<configuration>
+					<images>
+						<image>
+							<alias>db</alias>
+							<name>robgmills/auth_db:${project.version}</name>
+							<build>
+								<assembly>
+									<dockerFileDir>${project.basedir}/opt/docker/db</dockerFileDir>
+									<exportBasedir>false</exportBasedir>
+								</assembly>
+							</build>
+							<run>
+								<ports>
+									<port>auth.db.port:5432</port>
+								</ports>
+								<wait>
+									<log>database system is ready to accept connections</log>
+									<time>20000</time>
+								</wait>
+								<log>
+									<prefix>PSQL</prefix>
+									<color>blue</color>
+								</log>
+							</run>
+						</image>
+						<image>
+							<alias>app</alias>
+							<name>robgmills/auth_app:${project.version}</name>
+							<build>
+								<assembly>
+									<dockerFileDir>${project.basedir}</dockerFileDir>
+								</assembly>
+							</build>
+							<run>
+								<ports>
+									<port>auth.app.port:8080</port>
+								</ports>
+								<links>
+									<link>db:db</link>
+								</links>
+								<wait>
+									<log>Started Application in</log>
+									<time>20000</time>
+								</wait>
+								<log>
+									<prefix>AUTH</prefix>
+									<color>yellow</color>
+								</log>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>start</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>stop</id>
 						<phase>post-integration-test</phase>
 						<goals>
-							<goal>stop-containers</goal>
+							<goal>stop</goal>
+							<goal>remove</goal>
 						</goals>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>verify</goal>
-						</goals>
+						<configuration>
+							<removeAll>true</removeAll>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

@@ -27,7 +27,7 @@ should only be used to grant access to API endpoints that do not contain private
 
 #### Example Request 
 
-    curl -XPOST app:password@`boot2docker ip`:8080/oauth/token\?grant_type=client_credentials
+    curl -v -XPOST app:password@`boot2docker ip`:8080/oauth/token\?grant_type=client_credentials
 
 
 #### Example Response
