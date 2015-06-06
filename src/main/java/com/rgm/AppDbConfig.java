@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 /**
- * Configuration for the application's data source(s).
+ * Configuration for the application's data source(s) including schema definition.
  *
  * @author Rob Mills
  * @version 1.0
@@ -40,8 +40,8 @@ public class AppDbConfig {
 		jdbcTemplate.execute(CREATE_OAUTH_ACCESS_TOKEN_SQL);
 		jdbcTemplate.execute(CREATE_USERS_SQL);
 		jdbcTemplate.execute(CREATE_AUTHORITIES_SQL);
-		jdbcTemplate.execute(DROP_IX_AUTH_USERNAME_SQL);
-		jdbcTemplate.execute(CREATE_IX_AUTH_USERNAME_SQL);
+		jdbcTemplate.execute(DROP_IX_AUTH_USER_ID_SQL);
+		jdbcTemplate.execute(CREATE_IX_AUTH_USER_ID_SQL);
 	}
 
 	private static final String CREATE_OAUTH_ACCESS_TOKEN_SQL = "CREATE TABLE IF NOT EXISTS oauth_access_token ("+
@@ -55,19 +55,20 @@ public class AppDbConfig {
 			");";
 
 	private static final String CREATE_USERS_SQL = "CREATE TABLE IF NOT EXISTS users ("+
-			"username VARCHAR(50) NOT NULL PRIMARY KEY,"+
+			"id VARCHAR(50) NOT NULL PRIMARY KEY,"+
+			"username VARCHAR(50) NOT NULL,"+
 			"password VARCHAR(60) NOT NULL,"+
 			"enabled BOOLEAN NOT NULL DEFAULT TRUE"+
 			");";
 
 	private static final String CREATE_AUTHORITIES_SQL = "CREATE TABLE IF NOT EXISTS authorities ("+
-			"username VARCHAR(50) NOT NULL,"+
+			"user_id VARCHAR(50) NOT NULL,"+
 			"authority VARCHAR(50) NOT NULL DEFAULT 'ROLE_USER',"+
-			"CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)"+
+			"CONSTRAINT fk_authorities_users FOREIGN KEY(user_id) REFERENCES users(id)"+
 			");";
 
-	private static final String DROP_IX_AUTH_USERNAME_SQL = "DROP INDEX IF EXISTS ix_auth_username;";
+	private static final String DROP_IX_AUTH_USER_ID_SQL = "DROP INDEX IF EXISTS ix_auth_user_id;";
 
-	private static final String CREATE_IX_AUTH_USERNAME_SQL = "CREATE UNIQUE INDEX ix_auth_username "+
-			"ON authorities (username,authority);";
+	private static final String CREATE_IX_AUTH_USER_ID_SQL = "CREATE UNIQUE INDEX ix_auth_user_id "+
+			"ON authorities (user_id,authority);";
 }

@@ -22,6 +22,11 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private static final String DEF_AUTHORITIES_BY_USERNAME_QUERY =
+			"SELECT u.username, a.authority " +
+			"FROM users u, authorities a " +
+			"WHERE u.username = ?";
+
 	@Autowired
 	private DataSource dataSource;
 
@@ -34,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth
 			.jdbcAuthentication()
+				.authoritiesByUsernameQuery(DEF_AUTHORITIES_BY_USERNAME_QUERY)
 				.dataSource(dataSource)
 				.passwordEncoder(encoder())
 			.withUser("admin").password(encoder().encode("admin")).roles("USER", "ADMIN");
