@@ -1,10 +1,8 @@
-package com.rgm.auth;
+package com.rgm;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -12,17 +10,39 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 /**
- * Entry point for the Spring Boot application.
+ * Configuration for the application's data source(s).
  *
  * @author Rob Mills
- * @version 1.1
- * @since 1.0
+ * @version 1.0
+ * @since 1.3
  */
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan
-@SpringBootApplication
-public class Application {
+public class AppDbConfig {
+
+	/**
+	 * Configures the data source using the application properties
+	 * for the OAuth database url and driver class name.
+	 *
+	 * @return the fully configured DataSource
+	 */
+	@Bean
+	@ConfigurationProperties(prefix = "oauth.db")
+	public DataSource dataSource() {
+		return DataSourceBuilder.create().build();
+	}
+
+	/**
+	 * Set up all the required database schemas.
+	 */
+	@PostConstruct
+	public void setUpDatasource() {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource());
+		jdbcTemplate.execute(CREATE_OAUTH_ACCESS_TOKEN_SQL);
+		jdbcTemplate.execute(CREATE_USERS_SQL);
+		jdbcTemplate.execute(CREATE_AUTHORITIES_SQL);
+		jdbcTemplate.execute(DROP_IX_AUTH_USERNAME_SQL);
+		jdbcTemplate.execute(CREATE_IX_AUTH_USERNAME_SQL);
+	}
 
 	private static final String CREATE_OAUTH_ACCESS_TOKEN_SQL = "CREATE TABLE IF NOT EXISTS oauth_access_token ("+
 			"token_id VARCHAR(256) NOT NULL PRIMARY KEY,"+
@@ -50,24 +70,4 @@ public class Application {
 
 	private static final String CREATE_IX_AUTH_USERNAME_SQL = "CREATE UNIQUE INDEX ix_auth_username "+
 			"ON authorities (username,authority);";
-
-	@Autowired
-	private DataSource dataSource;
-
-	/**
-	 * Set up all the required database schemas.
-	 */
-	@PostConstruct
-	public void setUpDatasource() {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		jdbcTemplate.execute(CREATE_OAUTH_ACCESS_TOKEN_SQL);
-		jdbcTemplate.execute(CREATE_USERS_SQL);
-		jdbcTemplate.execute(CREATE_AUTHORITIES_SQL);
-		jdbcTemplate.execute(DROP_IX_AUTH_USERNAME_SQL);
-		jdbcTemplate.execute(CREATE_IX_AUTH_USERNAME_SQL);
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
 }

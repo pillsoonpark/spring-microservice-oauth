@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -29,17 +30,8 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 @EnableAuthorizationServer
 public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 
-	/**
-	 * Configures the data source using the application properties
-	 * for the OAuth database url and driver class name.
-	 *
-	 * @return the fully configured DataSource
-	 */
-	@Bean
-	@ConfigurationProperties(prefix = "oauth.db")
-	public DataSource dataSource() {
-		return DataSourceBuilder.create().build();
-	}
+	@Autowired
+	private DataSource dataSource;
 
 	/**
 	 * Provides a persistent JdbcTokenStore using the DataSource configured in
@@ -49,7 +41,7 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 	 */
 	@Bean
 	public TokenStore tokenStore() {
-		return new JdbcTokenStore(dataSource());
+		return new JdbcTokenStore(dataSource);
 	}
 
 	@Override
