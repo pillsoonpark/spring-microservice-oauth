@@ -108,6 +108,7 @@
 				<executions>
 					<execution>
 						<id>build</id>
+						<phase>pre-integration-test</phase>
 						<configuration>
 							<images>
 								<image>
@@ -119,7 +120,7 @@
 											<dest>init-database.sh</dest>
 										</artifact>
 									</artifacts>
-									<keep>true</keep>
+									<keep>false</keep>
 									<nameAndTag>robgmills/auth-db:latest</nameAndTag>
 								</image>
 								<image>
@@ -131,7 +132,7 @@
 											<dest>target/${project.build.finalName}.jar</dest>
 										</artifact>
 									</artifacts>
-									<keep>true</keep>
+									<keep>false</keep>
 									<nameAndTag>robgmills/auth-app:latest</nameAndTag>
 								</image>
 							</images>
@@ -142,6 +143,7 @@
 					</execution>
 					<execution>
 						<id>start</id>
+						<phase>pre-integration-test</phase>
 						<configuration>
 							<containers>
 								<container>
@@ -160,12 +162,14 @@
 					</execution>
 					<execution>
 						<id>stop</id>
+						<phase>post-integration-test</phase>
 						<goals>
 							<goal>stop-containers</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>verify</id>
+						<phase>verify</phase>
 						<goals>
 							<goal>verify</goal>
 						</goals>
