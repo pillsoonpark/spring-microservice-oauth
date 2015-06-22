@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 import com.jayway.restassured.RestAssured;
 import com.rgm.AbstractApiIT;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Rob Mills
@@ -24,7 +25,7 @@ public class ClientCredentialsIT extends AbstractApiIT {
 		when().
 				post().
 		then().
-				statusCode(401);
+				statusCode(HttpStatus.UNAUTHORIZED.value());
 	}
 
 	@Test
@@ -35,7 +36,7 @@ public class ClientCredentialsIT extends AbstractApiIT {
 		when().
 				post().
 		then().
-				statusCode(401);
+				statusCode(HttpStatus.UNAUTHORIZED.value());
 	}
 
 	@Test
@@ -46,7 +47,7 @@ public class ClientCredentialsIT extends AbstractApiIT {
 		when().
 				post().
 		then().
-				statusCode(200).
+				statusCode(HttpStatus.OK.value()).
 				body("token_type", equalTo("bearer")).
 				body("scope", containsString("read")).
 				body("scope", containsString("write")).
