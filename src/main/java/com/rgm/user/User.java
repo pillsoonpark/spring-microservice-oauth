@@ -23,6 +23,7 @@ import java.util.UUID;
 @Entity
 @Table(name="users")
 @Data
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class User {
 
 	private static final int MIN_EMAIL_LENGTH = 5;
