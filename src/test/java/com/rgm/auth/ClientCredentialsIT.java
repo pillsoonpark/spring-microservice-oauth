@@ -4,6 +4,7 @@ import static com.jayway.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 import com.jayway.restassured.RestAssured;
+import com.rgm.AbstractApiIT;
 import org.junit.Test;
 
 /**
