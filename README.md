@@ -89,8 +89,6 @@ Features:
     - Resource Owner Password Credentials Grant
 - Customize the authorization page
 - Add control of authorized clients for users
-<<<<<<< c042ee57f42e8cf525bbc6d26824a0d7daf1220c
 - Use embedded database cluster with flush-to-disk capabilities
-=======
 - Friendly API error messages and status codes
->>>>>>> Implement tests for User api, hide pw
+- Registration/Account management

@@ -17,7 +17,7 @@ import java.util.List;
  * @since 1.3
  */
 public interface UserRepository extends CrudRepository<User, String> {
-	@PostAuthorize("returnObject.firstName == principal.username or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("returnObject.username == principal.username or hasRole('ROLE_ADMIN')")
 	List<User> findByEmail(@Param("email") String email);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

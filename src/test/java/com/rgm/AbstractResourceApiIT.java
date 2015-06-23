@@ -1,5 +1,7 @@
 package com.rgm;
 
+import org.junit.Test;
+
 /**
  * Common functionality for all resource-based API tests
  *
@@ -13,6 +15,9 @@ public abstract class AbstractResourceApiIT extends AbstractApiIT {
 	protected static final String REGEX_LOCATION_URL =
 			"http(s)?://((\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(\\w)+)(:\\d{2,6})?([/\\w\\d]+)+/"
 					+ "([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})";
+
+	@Test
+	public abstract void crud() throws Exception;
 
 	protected static boolean isValidLocationUrl(String location) {
 		return location.matches(REGEX_LOCATION_URL);
