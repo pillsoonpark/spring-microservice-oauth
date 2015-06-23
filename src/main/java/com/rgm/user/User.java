@@ -1,14 +1,12 @@
 package com.rgm.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.UUID;
@@ -46,6 +44,17 @@ public class User {
 	@JsonDeserialize(using = BCryptPasswordDeserializer.class )
 	private String password;
 
-	@Column(name="enabled", nullable = false)
-	private boolean enabled;
+	@JsonProperty
+	public void setPassword(final String password) {
+		this.password = password;
+	}
+
+	// Hide the password on json serialization
+	@JsonIgnore
+	public String getPassword() {
+		return this.password;
+	}
+
+	@Column(name="enabled", nullable = true)
+	private boolean enabled = true;
 }

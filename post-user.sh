@@ -3,11 +3,11 @@
 # to create a user.
 #
 # Ex:
-#     ./create-user.sh myusername mypassword
+#     ./post-user.sh myusername mypassword
 
 function print_example() {
 	echo "Please provide a ${1}!!"
-	echo "Ex: ./create-user.sh myusername mypassword"
+	echo "Ex: ./post-user.sh myusername mypassword"
 }
 
 if [ -z "$1" ]; then
