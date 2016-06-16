@@ -1,14 +1,17 @@
-db:
-  build: opt/docker/db
-  ports:
-    - "5432:5432"
-    - "5432"
-app:
-  build: .
-  ports:
-    - "8080:8080"
-    - "8080"
-    - "8000:8000"
-    - "8000"
-  links:
-    - db
+version: "2"
+
+services:
+  db:
+    build: opt/docker/db
+    ports:
+      - "5432:5432"
+      - "5432"
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+      - "8080"
+      - "8000:8000"
+      - "8000"
+    links:
+      - db
