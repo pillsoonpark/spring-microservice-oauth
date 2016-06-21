@@ -7,3 +7,9 @@ services:
   app:
     build: .
     network_mode: host
+    environment:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: auth_db
+      DB_USER: auth_user
+      DB_PASS: auth_pass

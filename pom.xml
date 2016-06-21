@@ -167,24 +167,21 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.jolokia</groupId>
+				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.12.0</version>
+				<version>0.15.7</version>
 				<configuration>
 					<images>
 						<image>
 							<alias>db</alias>
 							<name>robgmills/auth_db:${project.version}</name>
 							<build>
+								<dockerFileDir>${project.basedir}/opt/docker/db</dockerFileDir>
 								<assembly>
-									<dockerFileDir>${project.basedir}/opt/docker/db</dockerFileDir>
 									<exportBasedir>false</exportBasedir>
 								</assembly>
 							</build>
 							<run>
-								<ports>
-									<port>auth.db.port:5432</port>
-								</ports>
 								<wait>
 									<log>database system is ready to accept connections</log>
 									<time>20000</time>
@@ -199,9 +196,7 @@
 							<alias>app</alias>
 							<name>robgmills/auth_app:${project.version}</name>
 							<build>
-								<assembly>
-									<dockerFileDir>${project.basedir}</dockerFileDir>
-								</assembly>
+								<dockerFileDir>${project.basedir}</dockerFileDir>
 							</build>
 							<run>
 								<ports>
@@ -218,6 +213,13 @@
 									<prefix>AUTH</prefix>
 									<color>yellow</color>
 								</log>
+								<env>
+									<DB_HOST>db</DB_HOST>
+									<DB_PORT>5432</DB_PORT>
+									<DB_NAME>auth_db</DB_NAME>
+									<DB_USER>auth_user</DB_USER>
+									<DB_PASS>auth_pass</DB_PASS>
+								</env>
 							</run>
 						</image>
 					</images>
