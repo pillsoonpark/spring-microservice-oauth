@@ -1,20 +1,20 @@
 package com.rgm.auth;
 
+import static com.jayway.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
 import com.jayway.restassured.RestAssured;
 import org.junit.Test;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
 
 /**
  * @author Rob Mills
  * @version 1.0
  * @since 1.2
  */
-public class TokenIT extends AbstractApiIT {
+public class ClientCredentialsIT extends AbstractApiIT {
 
 	// Setup the API endpoint path
-	static { RestAssured.basePath = "/oauth/token"; }
+	static { RestAssured.basePath = AUTH_URI.TOKEN.uri(); }
 
 	@Test
 	public void clientCredentialsNoAuth() {

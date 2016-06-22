@@ -1,10 +1,10 @@
 package com.rgm.auth;
 
+import static com.jayway.restassured.RestAssured.*;
+
 import com.jayway.restassured.RestAssured;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
-import static com.jayway.restassured.RestAssured.reset;
 
 /**
  * Sets the host name and port for the API tests
@@ -14,6 +14,24 @@ import static com.jayway.restassured.RestAssured.reset;
  * @since 1.2
  */
 public abstract class AbstractApiIT {
+
+	// Common place to store the API URIs and make available for tests
+	protected enum AUTH_URI {
+		LOGIN("/login"),
+		TOKEN("/oauth/token"),
+		AUTHORIZE("/oauth/authorize");
+
+		private final String uri;
+
+		AUTH_URI(String uri) {
+			this.uri = uri;
+		}
+
+		public String uri() {
+			return uri;
+		}
+	};
+
 	@BeforeClass
 	public static void setupApiHostAndPort() {
 		System.out.println("auth.test.host=" + System.getProperty("auth.test.host"));

@@ -1,5 +1,7 @@
 package com.rgm.auth;
 
+import javax.sql.DataSource;
+
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +12,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-
-import javax.sql.DataSource;
 
 /**
  * Configuration for the OAuth server.
@@ -61,16 +61,11 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
 				.withClient("app")
-					.authorities("ROLE_ADMIN")
+					.authorities("CLIENT")
 					.resourceIds("com.rgm.auth","com.rgm.app")
 					.scopes("read", "write")
-					.authorizedGrantTypes("client_credentials")
+					.authorizedGrantTypes("client_credentials", "authorization_code")
 					.secret("password")
-				.and()
-				.withClient("web")
-					.redirectUris("http://robgmills.com/oauth/receive")
-					.resourceIds("com.rgm.auth","com.rgm.app")
-					.scopes("read")
-					.authorizedGrantTypes("implicit");
+					.redirectUris("http://localhost/oauth_callback");
 	}
 }

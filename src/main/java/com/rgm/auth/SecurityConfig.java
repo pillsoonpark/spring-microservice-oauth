@@ -36,12 +36,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.jdbcAuthentication()
 				.dataSource(dataSource)
 				.passwordEncoder(encoder())
-			/*.withUser("admin").password(encoder().encode("admin")).roles("USER", "ADMIN")*/;
+			.withUser("admin").password(encoder().encode("admin")).roles("USER", "ADMIN");
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.authorizeRequests()
+				.antMatchers("/oauth/**")
+				.permitAll()
+				.and()
 			.authorizeRequests()
 				.antMatchers("/login*","/api*","/api/**")
 				.permitAll()
