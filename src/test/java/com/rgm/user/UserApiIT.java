@@ -1,5 +1,9 @@
 package com.rgm.user;
 
+import static com.jayway.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.rgm.AbstractResourceApiIT;
@@ -7,10 +11,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
 
 /**
  * @author Rob Mills
@@ -84,7 +84,7 @@ public class UserApiIT extends AbstractResourceApiIT {
 		.when()
 				.patch(location)
 		.then()
-				.statusCode(HttpStatus.NO_CONTENT.value())
+				.statusCode(HttpStatus.OK.value())
 		.extract()
 				.header(HEADER_LOCATION);
 		// @formatter:on
@@ -98,7 +98,7 @@ public class UserApiIT extends AbstractResourceApiIT {
 		.when()
 				.put(location)
 		.then()
-				.statusCode(HttpStatus.NO_CONTENT.value())
+				.statusCode(HttpStatus.OK.value())
 		.extract()
 				.header(HEADER_LOCATION);
 		// @formatter:on
