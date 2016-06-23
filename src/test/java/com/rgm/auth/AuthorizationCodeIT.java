@@ -12,6 +12,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.authentication.FormAuthConfig;
 import com.jayway.restassured.filter.session.SessionFilter;
 import com.jayway.restassured.response.Response;
+import com.rgm.AbstractApiIT;
 import org.junit.Test;
 
 /**
